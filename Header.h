@@ -65,7 +65,7 @@ int* strToArr(string num)
 			}
 			else
 			{
-				cout << "Error 404: Âû ââåëè íåêîððåêòíîå çíà÷åíèå" << endl;
+				cout << "Error 404: Ã‚Ã» Ã¢Ã¢Ã¥Ã«Ã¨ Ã­Ã¥ÃªÃ®Ã°Ã°Ã¥ÃªÃ²Ã­Ã®Ã¥ Ã§Ã­Ã Ã·Ã¥Ã­Ã¨Ã¥" << endl;
 				exit(0);
 			}
 		}
@@ -89,7 +89,7 @@ int* longAdd(int first[t], int  second[t], int summa[t + 1])
 		carry = temp / c;
 	}
 	cout << endl;
-	cout << "Âàø îòâåò (ñóììà):   ";
+	cout << "Ã‚Ã Ã¸ Ã®Ã²Ã¢Ã¥Ã² (Ã±Ã³Ã¬Ã¬Ã ):   ";
 	for (int i = 0; i < k; i++)
 	{
 		if (i != 0 && summa[t - k + i + 1] / pow(16, w - 1) < 1)
@@ -99,4 +99,13 @@ int* longAdd(int first[t], int  second[t], int summa[t + 1])
 		else cout << hex << summa[t - k + i + 1];
 	}
 	return summa;
+}
+int LongCompare(int first[t], int second[t]) 
+{
+	for (int i = k; i > 0; i--)
+	{
+		if (first[t - i] > second[t - i]) return 1;
+		if (first[t - i] < second[t - i]) return 2;
+	}
+	return 0;
 }

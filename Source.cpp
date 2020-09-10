@@ -23,6 +23,12 @@ int main()
 	fN.size() >= sN.size() ? k = fN.size() : k = sN.size();
 	k% w == 0 ? k = k / w : k = k / w + 1;
 	summa = longAdd(first,second,summa);
+	if(LongCompare(first, second)==0)
+		cout << "Значения одинаковы" << endl;
+	if (LongCompare(first, second) == 1)
+		cout << "Первое число больше второго" << endl;
+	if (LongCompare(first, second) == 2)
+		cout << "Второе число больше первого" << endl;
 	delete[] summa;
 	delete[] first;
 	delete[] second;

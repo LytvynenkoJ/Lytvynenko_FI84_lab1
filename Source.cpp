@@ -29,6 +29,17 @@ int main()
 		cout << "Первое число больше второго" << endl;
 	if (LongCompare(first, second) == 2)
 		cout << "Второе число больше первого" << endl;
+	if (LongCompare(first, second) <= 1)
+	{
+		cout << "Разность 2-х чисел:  ";
+		difference = longDiff(first, second, difference);
+	}
+	else
+	{
+		cout << "Разность 2-х чисел:  -";
+		difference = longDiff(second, first, difference);
+	}
+	delete[] difference;
 	delete[] summa;
 	delete[] first;
 	delete[] second;

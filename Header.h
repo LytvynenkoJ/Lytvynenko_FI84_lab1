@@ -129,8 +129,7 @@ int* longDiff(int first[t],int second[t], int difference[t])
 	}
 	for (int i = 0; i < k; i++)
 	{
-		if(difference[t-k+i]!=0)
-		cout << hex << difference[t - k + i];
+		cout << setfill('0') << setw(w) << hex << difference[t - k + i];
 	}
 	return difference;
 }

@@ -109,3 +109,28 @@ int LongCompare(int first[t], int second[t])
 	}
 	return 0;
 }
+int* longDiff(int first[t],int second[t], int difference[t])
+{
+	int borrow = 0;
+	int temp = 0;
+	for (int i = 1; i < k + 1; i++)
+	{
+		temp = first[t - i] - second[t - i] - borrow;
+		if (temp >= 0)
+		{
+			difference[t - i] = temp;
+			borrow = 0;
+		}
+		else
+		{
+			difference[t - i] = temp + pow(16, w);
+			borrow = 1;
+		}
+	}
+	for (int i = 0; i < k; i++)
+	{
+		if(difference[t-k+i]!=0)
+		cout << hex << difference[t - k + i];
+	}
+	return difference;
+}

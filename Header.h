@@ -65,7 +65,7 @@ int* strToArr(string num)
 			}
 			else
 			{
-				cout << "Error 404: Âû ââåëè íåêîððåêòíîå çíà÷åíèå" << endl;
+				cout << "Error 404: Вы ввели некорректное значение" << endl;
 				exit(0);
 			}
 		}
@@ -89,7 +89,7 @@ int* longAdd(int first[t], int  second[t], int summa[t + 1])
 		carry = temp / c;
 	}
 	cout << endl;
-	cout << "Âàø îòâåò (ñóììà):   ";
+	cout << "Сумма:   ";
 	for (int i = 0; i < k; i++)
 	{
 		if (i != 0 && summa[t - k + i + 1] / pow(16, w - 1) < 1)
@@ -137,4 +137,33 @@ int* longDiff(int first[t],int second[t], int difference[t])
 
 	}
 	return difference;
+}
+int* LongMulOneDigit(int first[t], int digit, int shift) 
+{
+	int* m = new int[2*t];
+	m = obnul(m,2*t);
+	int temp = 0;
+	int carry = 0;
+	for (int i = 1; i < high(first,t)+2; i++)
+	{
+		temp = first[t - i] * digit + carry;
+		int c = pow(16,w);
+		m[2 * t - i - shift] = temp % c;
+		carry = temp / c;
+	}
+	cout << "Умножение:   ";
+	int cou = high(m, 2 * t) + 1 - 4*shift;
+	cout << cou << endl;
+	if (cou % w != 0) cou = cou/w + 1;
+	else cou = cou/w;
+	cout << cou <<  "   " << shift << endl;
+	for (int i = 0; i < cou; i++)
+	{
+		if (i != 0 && m[2*t - cou + i - shift] / pow(16, w - 1) < 1)
+		{
+			cout << setfill('0') << setw(w) << hex << m[2*t - cou + i - shift];
+		}
+		else cout << hex << m[2*t - cou + i - shift];
+	}
+	return m;
 }

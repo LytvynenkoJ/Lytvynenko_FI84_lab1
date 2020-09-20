@@ -9,11 +9,11 @@ using namespace std;
 
 string fN;
 string sN;
-int w = 4;
+int w = 8;
 int k = 0;
-const int t = 100;
+const int t = 10000;
 
-int* obnul(int arr[], int c)
+unsigned long long int* obnul(unsigned long long int arr[], int c)
 {
 	for (int i = 0; i < c; i++)
 	{
@@ -21,7 +21,7 @@ int* obnul(int arr[], int c)
 	}
 	return arr;
 }
-int high(int arr[], int c)
+int high(unsigned long long int arr[], int c)
 {
 	int coun = 0;
 	int a = 0;
@@ -46,7 +46,7 @@ int high(int arr[], int c)
 	}
 	return coun - 1;
 }
-void outArr(int arr[], int c)
+void outArr(unsigned long long int arr[], int c)
 {
 	int coun = high(arr, c) + 1;
 	if (coun % w != 0) coun = coun / w + 1;
@@ -74,19 +74,25 @@ int stringTo16(char letter)
 	case '7':return 7;
 	case '8':return 8;
 	case '9':return 9;
+	case 'A':return 10;
 	case 'a':return 10;
+	case 'B':return 11;
 	case 'b':return 11;
+	case 'C':return 12;
 	case 'c':return 12;
+	case 'D':return 13;
 	case 'd':return 13;
+	case 'E':return 14;
 	case 'e':return 14;
+	case 'F':return 15;
 	case 'f':return 15;
 	}
 	return -1;
 }
-int* strToArr(string num)
+unsigned long long int* strToArr(string num)
 {
-	int Number1 = 0;
-	int* arr = new int[t];
+	unsigned long long int Number1 = 0;
+	unsigned long long int* arr = new unsigned long long int[t];
 	arr = obnul(arr,t);
 	int c = 0;
 	for (int i = 1; i < num.size() + 1; i++)
@@ -116,23 +122,23 @@ int* strToArr(string num)
 	}
 	return arr;
 }
-int* longAdd(int first[], int  second[], int summa[], int co)
+unsigned long long int* longAdd(unsigned long long int first[], unsigned long long int  second[], unsigned long long int summa[], int co)
 {
-	int temp = 0;
-	int carry = 0;
+	unsigned long long int temp = 0;
+	unsigned long long int carry = 0;
 	int coun = high(first, co)>=high(second,co)?high(first,co)+1:high(second,co)+1;
 	if (coun % w != 0) coun = coun / w + 1;
 	else coun = coun / w;
 	for (int i = 1; i < coun+1; i++)
 	{
 		temp = first[co - i] + second[co - i] + carry;
-		int c = pow(16, w);
+		unsigned long long int c = pow(16, w);
 		summa[co - i] = temp % c;
 		carry = temp / c;
 	}
 	return summa;
 }
-int LongCompare(int first[t], int second[t]) 
+int LongCompare(unsigned long long int first[t], unsigned long long int second[t])
 {
 	for (int i = k; i > 0; i--)
 	{
@@ -141,10 +147,10 @@ int LongCompare(int first[t], int second[t])
 	}
 	return 0;
 }
-int* longDiff(int first[t],int second[t], int difference[t])
+unsigned long long int* longDiff(unsigned long long int first[t], unsigned long long int second[t], unsigned long long int difference[t])
 {
-	int borrow = 0;
-	int temp = 0;
+	unsigned long long int borrow = 0;
+	unsigned long long int temp = 0;
 	for (int i = 1; i < k + 1; i++)
 	{
 		temp = first[t - i] - second[t - i] - borrow;
@@ -161,34 +167,80 @@ int* longDiff(int first[t],int second[t], int difference[t])
 	}
 	return difference;
 }
-int* LongMulOneDigit(int first[t], int digit, int shift) 
+unsigned long long int* LongMulOneDigit(unsigned long long int first[], int digit, int shift,int co)
 {
-	int* m = new int[2*t];
-	m = obnul(m,2*t);
-	unsigned long int temp = 0;
-	int carry = 0;
-	for (int i = 1; i <= high(first,t)/w+2; i++)
+	unsigned long long int* m = new unsigned long long int[co];
+	m = obnul(m,co);
+	unsigned long long int temp = 0;
+	unsigned long long int carry = 0;
+	for (int i = 1; i <= high(first,co)/w+2; i++)
 	{
-		temp = first[t - i] * digit + carry;
-		int c = pow(16,w);
-		m[2 * t - i - shift] = temp % c;
+		temp = first[co - i] * digit + carry;
+		unsigned long long int c = pow(16,w);
+		m[co - i - shift] = temp % c;
 		carry = temp / c;
 	}
 	return m;
 }
-int* LongMul(int first[], int second[], int c)
+unsigned long long int* LongMul(unsigned long long int first[], unsigned long long int second[], int c)
 {
-	int* temp = new int[2 * c];
-	int* mult = new int[2 * c];
-	mult = obnul(mult, 2 * c);
-	temp = obnul(temp, 2 * c);
+	unsigned long long int* temp = new unsigned long long int[c];
+	unsigned long long int* mult = new unsigned long long int[c];
+	mult = obnul(mult, c);
+	temp = obnul(temp, c);
 	int cou = high(second, c) + 1;
 	if (cou % w != 0) cou = cou / w + 1;
 	else cou = cou / w;
 	for (int i = 0; i < cou; i++)
 	{
-		temp = LongMulOneDigit(first, second[c - i - 1], i);
-		mult = longAdd(mult, temp, mult, 2 * c);
+		temp = LongMulOneDigit(first, second[c - i - 1], i,c);
+		mult = longAdd(mult, temp, mult, c);
 	}
 	return mult;
+}
+unsigned long long int* LongPow(unsigned long long int first[], unsigned long long int second[])
+{
+	unsigned long long int* power = new unsigned long long int[t];
+	power = obnul(power,t);
+	power[t - 1] = 1;
+	unsigned long long int** d = new unsigned long long int* [16];
+	for (int i = 0; i < 16; i++)
+	{
+		d[i] = new unsigned long long int[t];
+		d[i] = obnul(d[i], t);
+	}
+	d[0][t - 1] = 1;
+	for (int i = 0; i < t; i++)
+	{
+		d[1][i] = first[i];
+	}
+	for (int i = 2; i < 16; i++)
+	{
+		d[i] = LongMul(first, d[i - 1], t);
+	}
+	int a = high(second, t) + 1;
+	cout << a << endl;
+	int cou = 0;
+	if (a % w != 0) cou = a / w + 1;
+	else cou = a / w;
+	int c = 0;
+	for (int i = cou; i > 0; i--)
+	{
+		int temp = 0;
+		c = second[t - i];
+		for (int j = 0; j < w; j++)
+		{
+			temp = c / pow(16, w - 1 - j);
+			power = LongMul(power, d[temp], t);
+			if (i!=0 && j!=w-1)
+			{
+				for (int g = 0; g < 4; g++)
+				{
+					power = LongMul(power, power, t);
+				}
+			}
+			c = c - temp * pow(16, w - 1 - j);
+		}
+	}
+	return power;
 }

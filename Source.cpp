@@ -8,20 +8,22 @@ int main()
 	
 	cout << "Введите 1-е число:   ";
 	cin >> fN;
-	int* summa = new int[t];
-	int* difference = new int[t];
-	int* mult = new int[2*t+1];
-	int* first = new int[t];
-	int* second = new int[t];
+	unsigned long long int* summa = new unsigned long long int[t];
+	unsigned long long int* difference = new unsigned long long int[t];
+	unsigned long long int* mult = new unsigned long long int[t];
+	unsigned long long int* first = new unsigned long long int[t];
+	unsigned long long int* second = new unsigned long long int[t];
 	difference = obnul(difference,t);
 	summa = obnul(summa,t);
-	mult = obnul(mult,2*t+1);
+	mult = obnul(mult,t);
 	first = obnul(first,t);
 	second = obnul(second,t);
 	first = strToArr(fN);
 	cout << "Введите 2-е число:   ";
 	cin >> sN;
 	second = strToArr(sN);
+	unsigned long long int* power = new unsigned long long int[t];
+	obnul(power, t);
 	fN.size() >= sN.size() ? k = fN.size() : k = sN.size();
 	k% w == 0 ? k = k / w : k = k / w + 1;
 	summa = longAdd(first,second,summa,t);
@@ -50,7 +52,7 @@ int main()
 	}
 	mult = LongMul(first, second, t);
 	cout << "Произведение:   ";
-	outArr(mult, 2 * t);
+	outArr(mult, t);
 	cout << endl;
 	if (high(first, t) >= 0) cout << "Степень страшего розряда 1-ого числа: " << dec << high(first, t) << endl;
 	else cout << "Я не знаю какой номер старшего НЕНУЛЕВОГО розряда у НУЛЯ" << endl;
@@ -60,8 +62,16 @@ int main()
 	else cout << "Я не знаю какой номер старшего НЕНУЛЕВОГО розряда у НУЛЯ" << endl;
 	if (high(difference, t) >= 0) cout << "Степень страшего розряда разности: " << dec << high(difference, t) << endl;
 	else cout << "Я не знаю какой номер старшего НЕНУЛЕВОГО розряда у НУЛЯ" << endl;
-	if (high(mult, 2*t) >= 0) cout << "Степень страшего розряда произведения: " << dec << high(mult, 2*t) << endl;
+	if (high(mult, t) >= 0) cout << "Степень страшего розряда произведения: " << dec << high(mult, t) << endl;
 	else cout << "Я не знаю какой номер старшего НЕНУЛЕВОГО розряда у НУЛЯ" << endl;
+
+	//степень оконный метод
+	power = LongPow(first,second);
+	cout << "Степень:   ";
+	outArr(power, t);
+	cout << endl;
+
+	delete[] power;
 	delete[] difference;
 	delete[] summa;
 	delete[] mult;

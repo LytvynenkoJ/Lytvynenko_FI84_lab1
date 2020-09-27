@@ -13,6 +13,8 @@ int main()
 	unsigned long long int* mult = new unsigned long long int[t];
 	unsigned long long int* first = new unsigned long long int[t];
 	unsigned long long int* second = new unsigned long long int[t];
+	unsigned long long int* div = new unsigned long long int[t];
+	div = obnul(div, t);
 	difference = obnul(difference,t);
 	summa = obnul(summa,t);
 	mult = obnul(mult,t);
@@ -70,7 +72,15 @@ int main()
 	cout << "Степень:   ";
 	outArr(power, t);
 	cout << endl;
+	div = Division(first, second);
+	cout << "Целая часть от деления:   ";
+	outArr(div, t);
+	cout << endl;
+	cout << "Остаток от деления:   ";
+	outArr(r, t);
+	cout << endl;
 
+	delete[] div;
 	delete[] power;
 	delete[] difference;
 	delete[] summa;

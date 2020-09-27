@@ -66,13 +66,17 @@ int main()
 	else cout << "Я не знаю какой номер старшего НЕНУЛЕВОГО розряда у НУЛЯ" << endl;
 	if (high(mult, t) >= 0) cout << "Степень страшего розряда произведения: " << dec << high(mult, t) << endl;
 	else cout << "Я не знаю какой номер старшего НЕНУЛЕВОГО розряда у НУЛЯ" << endl;
-
-	//степень оконный метод
 	power = LongPow(first,second);
 	cout << "Степень:   ";
 	outArr(power, t);
 	cout << endl;
 	div = Division(first, second);
+	cout << "Целая часть от деления:   ";
+	outArr(div,t,1);
+	cout << endl;
+	cout << "Остаток от деления:   ";
+	outArr(r, t,1);
+	cout << endl;
 	cout << "Целая часть от деления:   ";
 	outArr(div, t);
 	cout << endl;

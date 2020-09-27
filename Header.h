@@ -41,7 +41,7 @@ unsigned long long int* obnul(unsigned long long int arr[], int c)
 	}
 	return arr;
 }
-int high(unsigned long long int arr[], int c)
+int high(unsigned long long int arr[], int c,int w1 = w)
 {
 	int coun = 0;
 	int a = 0;
@@ -54,28 +54,29 @@ int high(unsigned long long int arr[], int c)
 		}
 	}
 	if (a == 0) return -2;
-	coun += w * (a - 1);
-	for (int i = 0; i < w; i++)
+	coun += w1 * (a - 1);
+	for (int i = 0; i < w1; i++)
 	{
 		if (arr[c - a] / p(4*i) < 1)
 		{
 			coun += i;
-			i = w;
+			i = w1;
 		}
-		if (arr[c - a] / pow(16, i) >= 1 && i == w - 1) coun += w;
+		if (arr[c - a] / pow(16, i) >= 1 && i == w - 1) coun += w1;
 	}
 	return coun - 1;
 }
-void outArr(unsigned long long int arr[], int c)
+void outArr(unsigned long long int arr[], int c, int w1 = w)
 {
-	int coun = high(arr, c) + 1;
-	if (coun % w != 0) coun = coun / w + 1;
-	else coun = coun / w;
+	int coun = high(arr, c, w1) + 1;
+	if (w1 != w)coun += 1;
+	if (coun % w1 != 0) coun = coun / w1 + 1;
+	else coun = coun / w1;
 	for (int i = 0; i < coun; i++)
 	{
-		if (i != 0 && arr[c - coun + i] / p(4*(w - 1)) < 1)
+		if (i != 0 && arr[c - coun + i] / p(4 * (w1 - 1)) < 1)
 		{
-			cout << setfill('0') << setw(w) << hex << arr[c - coun + i];
+			cout << setfill('0') << setw(w1) << hex << arr[c - coun + i];
 		}
 		else cout << hex << arr[c - coun + i];
 	}
@@ -142,25 +143,31 @@ unsigned long long int* strToArr(string num)
 	}
 	return arr;
 }
-unsigned long long int* longAdd(unsigned long long int first[], unsigned long long int  second[], unsigned long long int summa[], int co)
+unsigned long long int* longAdd(unsigned long long int first[], unsigned long long int  second[], unsigned long long int summa[], int co, int w1=w)
 {
 	unsigned long long int temp = 0;
 	unsigned long long int carry = 0;
-	int coun = high(first, co)>=high(second,co)?high(first,co)+1:high(second,co)+1;
-	if (coun % w != 0) coun = coun / w + 1;
-	else coun = coun / w;
+	int coun = high(first, co,w1)>=high(second,co,w1)?high(first,co,w1)+1:high(second,co,w1)+1;
+	if (coun % w1 != 0) coun = coun / w1 + 1;
+	else coun = coun / w1;
+	if (w1 != w) coun += 1;
 	for (int i = 1; i < coun+2; i++)
 	{
 		temp = first[co - i] + second[co - i] + carry;
-		unsigned long long int c = p(4*w);
-		summa[co - i] = mask(temp,4*w);
+		unsigned long long int c = p(4*w1);
+		summa[co - i] = mask(temp,4*w1);
 		carry = temp / c;
 	}
 	return summa;
 }
-int LongCompare(unsigned long long int first[t], unsigned long long int second[t])
+int LongCompare(unsigned long long int first[], unsigned long long int second[])
 {
-	high(first, t) > high(second, t) ? k = high(first, t)+1 : k = high(second, t)+1;
+	int h1 = 0;
+	int h2 = 0;
+	h1 = high(first, t);
+	h2 = high(second, t);
+	if (h1 >= h2) k = h1 + 1;
+	else k = h2 + 1;
 	k% w == 0 ? k = k / w : k = k / w + 1;
 	for (int i = k; i > 0; i--)
 	{
@@ -169,10 +176,14 @@ int LongCompare(unsigned long long int first[t], unsigned long long int second[t
 	}
 	return 0;
 }
-unsigned long long int* longDiff(unsigned long long int first[t], unsigned long long int second[t], unsigned long long int difference[t])
+unsigned long long int* longDiff(unsigned long long int first[], unsigned long long int second[], unsigned long long int difference[t], int w1=w)
 {
 	long long int borrow = 0;
 	long long int temp = 0;
+	int k = 0;
+	high(first, t, w1) > high(second, t, w1) ? k = high(first, t, w1) + 1 : k = high(second, t, w1) + 1;
+	k% w1 == 0 ? k = k / w1 : k = k / w1 + 1;
+	if (w1 != w) k = k + 1;
 	for (int i = 1; i < k + 1; i++)
 	{
 		temp = first[t - i] - second[t - i] - borrow;
@@ -183,7 +194,7 @@ unsigned long long int* longDiff(unsigned long long int first[t], unsigned long 
 		}
 		else
 		{
-			difference[t - i] = temp + p(4*w);
+			difference[t - i] = temp + p(4*w1);
 			borrow = 1;
 		}
 	}
@@ -291,122 +302,101 @@ unsigned long long int* Division(unsigned long long int first[], unsigned long l
 {
 	unsigned long long int* div = new unsigned long long int[t];
 	unsigned long long int* s = new unsigned long long int[t];
+	unsigned long long int* s2 = new unsigned long long int[t];
+	s2=obnul(s2,t);
+	s = obnul(s, t);
 	unsigned long long int* c = new unsigned long long int[t];
 	c = obnul(c, t);
-	div = obnul(div, t);
-	r = obnul(r, t);
-	int k = high(second, t);
-	r = first;
-	while (LongCompare(r, second) < 2)
+	int n = 1;
+	for (int i = 0; i < t; i++)
 	{
-		obnul(c, t);
-		int mp = high(r, t);
-		int temp = mp - k;
-		for (int i = 0; i < t; i++)
+		c[i] = second[i];
+	}
+	r = obnul(r, t);
+	for (int i = 0; i < t; i++)
+	{
+		r[i] = first[i];
+	}
+	r[t - 1] = first[t - 1] % 16;
+	c[t - 1] = second[t - 1] % 16;
+	int k = high(second, t)+1;
+	for (int i = 1; i < k; i++)
+	{
+		if (i%w!=0)
 		{
-			c[i] = second[i];
-		}
-		if (temp < 4 * w)
-		{
-			ShiftL(c, temp);
+			int l = pow(16, (i % w)+1);
+			c[t - i - 1] = second[t - n] % l;
+			unsigned long long int cl = 0;
+			l = pow(16, (i % w));
+			cl = c[t - i - 1] % l;
+			c[t - i - 1] -= cl;
+			c[t - i - 1] /= pow(16,(i%w));
 		}
 		else
 		{
-			int i = temp;
-			while (i > 0)
-			{
-				if (i >= 4 * w)
-				{
-					int q = i / w;
-					for (int j = 1; j < t; j++)
-					{
-						c[j - q] = c[j];
-					}
-					for (int j = 0; j < q; j++)
-					{
-						c[t - j - 1] = 0;
-					}
-					i = i - 4 * q * w;
-				}
-				else
-				{
-					ShiftL(c, i);
-					i = 0;
-				}
-			}
+			n++;
+			c[t-i - 1] = second[t - n] % 16;
+		}
+	}
+	k = high(first, t) + 1;
+	n = 1;
+	for (int i = 1; i < k; i++)
+	{
+		if (i % w != 0)
+		{
+			int l = pow(16, (i % w) + 1);
+			r[t - i - 1] = first[t - n] % l;
+			unsigned long long int cl = 0;
+			l = pow(16, (i % w));
+			cl = r[t - i - 1] % l;
+			r[t - i - 1] -= cl;
+			r[t - i - 1] /= pow(16, (i % w));
+		}
+		else
+		{
+			n++;
+			r[t - i - 1] = first[t - n] % 16;
+		}
+	}
+	for (int i = 0; i < t; i++)
+	{
+		s[i] = c[i];
+	}	
+	div = obnul(div, t);
+	while (LongCompare(r, second) < 2)
+	{
+		for (int i = 0; i < t; i++)
+		{
+			c[i] = s[i];
+		}
+		int mp = high(r, t, 1) + 1;
+		k = high(c, t, 1) + 1;
+		int temp = 0;
+		temp = mp - k;
+		for (int i = 0; i < t - temp; i++)
+		{
+			c[i] = c[i + temp];
+		}
+		for (int i = 0; i < temp; i++)
+		{
+			c[t - i - 1] = 0;
 		}
 		if (LongCompare(r, c) == 2)
 		{
-			system("pause");
-			temp = temp - 1;
-			for (int i = 0; i < t; i++)
+			temp -= 1;
+			if (temp < 0) return div;
+			for (int i = t - 2; i > 0; i--)
 			{
-				c[i] = second[i];
+				c[i + 1] = c[i];
 			}
-			if (temp < 4 * w)
-			{
-				ShiftL(c, temp);
-			}
-			else
-			{
-				int i = temp;
-				while (i > 0)
-				{
-					if (i >= 4 * w)
-					{
-						int q = i / w;
-						for (int j = 1; j < t; j++)
-						{
-							c[j - q] = c[j];
-						}
-						for (int j = 0; j < q; j++)
-						{
-							c[t - j - 1] = 0;
-						}
-						i = i - 4 * q * w;
-					}
-					else
-					{
-						ShiftL(c, i);
-						i = 0;
-					}
-				}
-			}
+			c[0] = 0;
 		}
-		r = longDiff(r, c, r);
-		s = obnul(s, t);
-		s[t - 1] = 1;
-		if (temp < 4 * w)
-		{
-			ShiftL(s, temp);
-		}
-		else
-		{
-			int i = temp;
-			while (i > 0)
-			{
-				if (i >= 4 * w)
-				{
-					int q = i / w;
-					for (int j = 1; j < t; j++)
-					{
-						c[j - q] = c[j];
-					}
-					for (int j = 0; j < q; j++)
-					{
-						c[t - j - 1] = 0;
-					}
-					i = i - 4 * q * w;
-				}
-				else
-				{
-					ShiftL(s, i);
-					i = 0;
-				}
-			}
-		}
-		div = longAdd(div, s, div, t);
-	}
+		r = longDiff(r, c, r, 1);
+		s2[t - temp - 1] = 1;
+		div = longAdd(div, s2, div, t, 1);
+		s2 = obnul(s2, t);
+	};
+    delete[] s2;
 	delete[] s;
 	delete[] c;
 	return div;

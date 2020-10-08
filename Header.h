@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <ctime>
+#include <chrono>
 #include <iomanip>
 #include "time.h"
 #include <string>
@@ -11,6 +13,9 @@ string fN;
 string sN;
 int w = 7;
 int k = 0;
+auto start = chrono::steady_clock::now();
+auto endtime = chrono::steady_clock::now();
+double tim = 0.0;
 const int t = 10000;
 unsigned long long int* r = new unsigned long long int[t];
 
@@ -28,11 +33,11 @@ unsigned long long int GHB(unsigned long long int word, int length)
 	int s = w * 4 - length;
 	return (word >> s) & ((1u << length) - 1);
 }
-unsigned long long int SB(unsigned long long int word, int length,unsigned long long val, int s)
+unsigned long long int SB(unsigned long long int word, int length, unsigned long long val, int s)
 {
 	const auto mask = (1u << length) - 1;
 	return (word & ~(mask << s)) | ((val & mask) << s);
-}
+};
 unsigned long long int* obnul(unsigned long long int arr[], int c)
 {
 	for (int i = 0; i < c; i++)
@@ -151,6 +156,7 @@ unsigned long long int* longAdd(unsigned long long int first[], unsigned long lo
 	if (coun % w1 != 0) coun = coun / w1 + 1;
 	else coun = coun / w1;
 	if (w1 != w) coun += 1;
+	start = chrono::steady_clock::now();
 	for (int i = 1; i < coun+2; i++)
 	{
 		temp = first[co - i] + second[co - i] + carry;
@@ -158,6 +164,7 @@ unsigned long long int* longAdd(unsigned long long int first[], unsigned long lo
 		summa[co - i] = mask(temp,4*w1);
 		carry = temp / c;
 	}
+	endtime = chrono::steady_clock::now();
 	return summa;
 }
 int LongCompare(unsigned long long int first[], unsigned long long int second[])
@@ -184,6 +191,7 @@ unsigned long long int* longDiff(unsigned long long int first[], unsigned long l
 	high(first, t, w1) > high(second, t, w1) ? k = high(first, t, w1) + 1 : k = high(second, t, w1) + 1;
 	k% w1 == 0 ? k = k / w1 : k = k / w1 + 1;
 	if (w1 != w) k = k + 1;
+	start = chrono::steady_clock::now();
 	for (int i = 1; i < k + 1; i++)
 	{
 		temp = first[t - i] - second[t - i] - borrow;
@@ -198,6 +206,7 @@ unsigned long long int* longDiff(unsigned long long int first[], unsigned long l
 			borrow = 1;
 		}
 	}
+	endtime = chrono::steady_clock::now();
 	return difference;
 }
 unsigned long long int* LongMulOneDigit(unsigned long long int first[], int digit, int shift,int co)
@@ -224,11 +233,13 @@ unsigned long long int* LongMul(unsigned long long int first[], unsigned long lo
 	int cou = high(second, c) + 1;
 	if (cou % w != 0) cou = cou / w + 1;
 	else cou = cou / w;
+	start = chrono::steady_clock::now();
 	for (int i = 0; i < cou; i++)
 	{
 		temp = LongMulOneDigit(first, second[c - i - 1], i,c);
 		mult = longAdd(mult, temp, mult, c);
 	}
+	endtime = chrono::steady_clock::now();
 	return mult;
 }
 unsigned long long int* LongPow(unsigned long long int first[], unsigned long long int second[])
@@ -400,4 +411,82 @@ unsigned long long int* Division(unsigned long long int first[], unsigned long l
 	delete[] s;
 	delete[] c;
 	return div;
+}
+unsigned long long int* DivTwo(unsigned long long int arr[])
+{
+	int h1 = high(arr, t) + 1;
+	if (h1 % w == 0) h1 = h1 / w;
+	else h1 = h1 / w + 1;
+	int s1 = 0;
+	int s2 = 0;
+	for (int i = 0; i < h1; i++)
+	{
+		s1 = arr[t - h1 + i] & 1;
+		arr[t - h1 + i] = arr[t - h1 + i] >> 1;
+		arr[t - h1 + i] = arr[t - h1 + i] | (s2 << (4 * w - 1));
+		s2 = s1;
+	}
+	return arr;
+}
+unsigned long long int* NSD(unsigned long long int first[], unsigned long long int second[])
+{
+	unsigned long long int* nsd = new unsigned long long int[t];
+	unsigned long long int* f = new unsigned long long int[t];
+	unsigned long long int* s = new unsigned long long int[t];
+	nsd = obnul(nsd, t);
+	f = obnul(f, t);
+	s = obnul(s, t);
+	for (int i = 0; i < t; i++)
+	{
+		f[i] = first[i];
+		s[i] = second[i];
+	}
+	nsd[t - 1] = 1;
+	int k1 = 0, k2 = 0;
+	k1 = high(f,t)+1;
+	k2 = high(s,t)+1;
+	while (mask(f[t - 1], 2) % 2 == 0 && mask(s[t - 1], 2) % 2 == 0 && k1!=-1 && k2!=-1)
+	{
+		DivTwo(f);
+		DivTwo(s);
+		nsd = LongMulOneDigit(nsd,2,0,t);
+	}
+	k1 = high(f, t) + 1;
+	k2 = high(s, t) + 1;
+	while (mask(f[t - 1], 2) % 2 == 0 && k1!=-1 && k2!=-1)
+	{
+		DivTwo(f);
+	}
+	k1 = high(f, t) + 1;
+	k2 = high(s, t) + 1;
+	while (k2!=-1)
+	{
+		while (mask(s[t - 1], 2) % 2 == 0 && k2 != -1)
+		{
+			DivTwo(s);
+			k2 = high(s, t) + 1;
+		}
+		if (LongCompare(f,s)==1)
+		{
+			unsigned long long int* c = new unsigned long long int[t];
+			for (int i = 0; i < t; i++)
+			{
+				c[i] = f[i];
+				f[i] = s[i];
+			}
+			s = longDiff(c, s, s);
+			delete[] c;
+		}
+		else
+		{
+			s = longDiff(s,f,s);
+		}
+		k1 = high(f, t) + 1;
+		k2 = high(s, t) + 1;
+	}
+	nsd = LongMul(nsd, f, t);
+	
+	delete[] f;
+	delete[] s;
+	return nsd;
 }

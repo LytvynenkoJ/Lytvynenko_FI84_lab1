@@ -15,6 +15,8 @@ int main()
 	unsigned long long int* second = new unsigned long long int[t];
 	unsigned long long int* div = new unsigned long long int[t];
 	unsigned long long int* nsd = new unsigned long long int[t];
+	unsigned long long int* nsk = new unsigned long long int[t];
+	nsk = obnul(nsk, t);
 	nsd = obnul(nsd, t);
 	div = obnul(div, t);
 	difference = obnul(difference,t);

@@ -74,16 +74,22 @@ int main()
 	cout << endl;
 	div = Division(first, second);
 	cout << "Целая часть от деления:   ";
-	outArr(div, t);
+	outArr(div, t, 1);
 	cout << endl;
 	cout << "Остаток от деления:   ";
-	outArr(r, t);
+	outArr(r, t, 1);
 	cout << endl;
 	nsd = NSD(first, second);
 	cout << "НОД 2-х чисел :    ";
 	outArr(nsd,t);
 	cout << endl;
-
+	nsk = NSK(first, second);
+	cout << "НОК 2-х чисел :    ";
+	outArr(nsk, t, 1);
+	cout << endl;
+	
+	delete[] nsk;
+	delete[] nsd;
 	delete[] div;
 	delete[] power;
 	delete[] difference;

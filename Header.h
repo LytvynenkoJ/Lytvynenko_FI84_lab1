@@ -490,3 +490,14 @@ unsigned long long int* NSD(unsigned long long int first[], unsigned long long i
 	delete[] s;
 	return nsd;
 }
+unsigned long long int* NSK(unsigned long long int first[], unsigned long long int second[])
+{
+	unsigned long long int* nsk = new unsigned long long int[t];
+	nsk = obnul(nsk,t);
+	nsk = LongMul(first, second, t);
+	unsigned long long int* nsd = new unsigned long long int[t];
+	nsd = obnul(nsd, t);
+	nsd = NSD(first, second);
+	nsk = Division(nsk,nsd);
+	return nsk;
+}

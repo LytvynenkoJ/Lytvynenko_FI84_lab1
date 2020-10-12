@@ -163,7 +163,13 @@ int main()
 	cout << dec << "Время работы произведения по Барретту в наносекундах : "
 		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
 		<< " ns" << endl << endl;
-
+	
+	// проверка (A+B)*C=A*C+B*C
+	mod = obnul(mod, t);
+	cout << "Введите 3-е число:   ";
+	cin >> N;
+	mod = strToArr(N);
+	Chek(first, second, mod);
 	
 	cout << "Степень по схеме Горнера:   ";
 	power = LongPowHorner(first,second);

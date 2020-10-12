@@ -270,6 +270,7 @@ unsigned long long int* LongPow(unsigned long long int first[], unsigned long lo
 	if (a % w != 0) cou = a / w + 1;
 	else cou = a / w;
 	int c = 0;
+	start = chrono::steady_clock::now();
 	for (int i = cou; i > 0; i--)
 	{
 		int temp = 0;
@@ -292,6 +293,7 @@ unsigned long long int* LongPow(unsigned long long int first[], unsigned long lo
 			c = c - temp * p(4*( w - 1 - j));
 		}
 	}
+	endtime = chrono::steady_clock::now();
 	return power;
 }
 void ShiftL(unsigned long long int s[],int n) 
@@ -562,16 +564,24 @@ unsigned long long int* Barrett(unsigned long long int x[], unsigned long long i
 {
 	unsigned long long int* c1 = new unsigned long long int[t];
 	unsigned long long int* c2 = new unsigned long long int[t];
+	//unsigned long long int* mu2 = new unsigned long long int[t];
+
 	int h1 = high(mod, t) + 1;
 	h1 = h1 * 2;
 	int h = h1 % w;
 	h1 = h1 / w + 1;
 	c1 = obnul(c1, t);
 	c2 = obnul(c2, t);
+	//mu2 = obnul(mu2, t);
 	c1 = ToOne(x);
+	/*cout << "mu :   ";
+	outArr(mu,t,1);
+	cout << endl;
+	//x = ToOne(x);*/
 	for (int i = 0; i < t; i++)
 	{
 		c2[i] = c1[i];
+		//mu2[i] = mu[i];
 	}
 	start = chrono::steady_clock::now();
 	int a = (h1 - 1) * w + h;
@@ -580,20 +590,56 @@ unsigned long long int* Barrett(unsigned long long int x[], unsigned long long i
 	{
 		c1[t - i - 1] = c1[t - i - a];
 	}
+	/*cout << "   c1>>k-1 :   ";
+	outArr(c1, t, 1);
+	cout << endl;*/
 	c1 = ToW(c1);
+	/*cout << "   c1 :   ";
+	outArr(c1, t);
+	cout << endl;*/
 	mu = ToW(mu);
+	/*cout << "    mu :   ";
+	outArr(mu, t);
+	cout << endl;
+	//mu2 = ToW(mu2);
+	//c1 = LongMul(c1, mu2, t);*/
 	c1 = LongMul(c1, mu, t);
+	/*cout << "      LongMul(c1, mu, t) :   ";
+	outArr(c1, t);
+	cout << endl;*/
 	c1 = ToOne(c1);
+	/*cout << "      c1 :   ";
+	outArr(c1, t, 1);
+	cout << endl;
+	cout << "      mu :   ";
+	outArr(mu, t);
+	cout << endl;*/
 	for (int i = 0; i < t - a - 3; i++)
 	{
 		c1[t - i - 1] = c1[t - i - a - 2];
 	}
+	//cout << "         c1>>k+1 :   ";
+	//outArr(c1, t, 1);
+	//cout << endl;
 	r = obnul(r, t);
 	c1 = ToW(c1);
 	c1 = LongMul(c1, mod, t);
+	//cout << "            LongMul(c1, mod, t) :   ";
+	//outArr(c1, t);
+	//cout << endl;
 	c1 = ToOne(c1);
 	r = longDiff(c2, c1, r,1);
+	//cout << "               longDiff(c2, c1, r,1) :   ";
+	//outArr(r, t, 1);
+	//cout << endl;
 	r = ToW(r);
+	/*cout << "               r :   ";
+	outArr(r, t);
+	cout << endl;
+	if (LongCompare(r, mod) != 2)
+	{
+		cout << "          r>=mod" << endl;
+	}*/
 	while (LongCompare(r,mod)!=2)
 	{
 		r = longDiff(r,mod,r);
@@ -602,5 +648,87 @@ unsigned long long int* Barrett(unsigned long long int x[], unsigned long long i
 
 	delete[] c1;
 	delete[] c2;
+	//delete[] mu2;
 	return r;
+}
+unsigned long long int* LongPowHorner(unsigned long long int first[], unsigned long long int second[])
+{
+	unsigned long long int* power = new unsigned long long int[t];
+	power = obnul(power, t);
+	power[t - 1] = 1;
+	int a = high(second, t) + 1;
+	int cou = 0;
+	if (a % w != 0) cou = a / w + 1;
+	else cou = a / w;
+	int c = 0;
+	start = chrono::steady_clock::now();
+	for (int i = cou; i > 0; i--)
+	{
+		int temp = 0;
+		c = second[t - i];
+		for (int j = 0; j < 4*w; j++)
+		{
+			temp = c / p(4*w-j-1);
+			if (temp==1)
+			{
+				power = LongMul(power, first, t);
+			}
+			if (i != 1)
+			{
+				power = LongMul(power, power, t);
+			}
+			else 
+			{
+				if (j != 4 * w - 1)
+				{
+					power = LongMul(power, power, t);
+				}
+			}
+			c = c - temp * p(4 * w - j - 1);
+		}
+	}
+	endtime = chrono::steady_clock::now();
+	return power;
+}
+unsigned long long int* ModPow(unsigned long long int first[], unsigned long long int second[], unsigned long long mod[], unsigned long long mu[])
+{
+	unsigned long long int* power = new unsigned long long int[t];
+	power = obnul(power, t);
+	power[t - 1] = 1;
+	int a = high(second, t) + 1;
+	int cou = 0;
+	if (a % w != 0) cou = a / w + 1;
+	else cou = a / w;
+	int c = 0;
+	start = chrono::steady_clock::now();
+	for (int i = cou; i > 0; i--)
+	{
+		int temp = 0;
+		c = second[t - i];
+		for (int j = 0; j < 4 * w; j++)
+		{
+			temp = c / p(4 * w - j - 1);
+			if (temp == 1)
+			{
+				power = LongMul(power, first, t);
+				power = Barrett(power, mod, mu);
+			}
+			if (i != 1)
+			{
+				power = LongMul(power, power, t);
+				power = Barrett(power, mod, mu);
+			}
+			else
+			{
+				if (j != 4 * w - 1)
+				{
+					power = LongMul(power, power, t);
+					power = Barrett(power, mod, mu);
+				}
+			}
+			c = c - temp * p(4 * w - j - 1);
+		}
+	}
+	endtime = chrono::steady_clock::now();
+	return power;
 }

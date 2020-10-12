@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include "windows.h"
 #include <ctime>
 #include <chrono>
 #include <iomanip>
@@ -85,6 +86,7 @@ void outArr(unsigned long long int arr[], int c, int w1 = w)
 		}
 		else cout << hex << arr[c - coun + i];
 	}
+	if (coun == 0 && w1 == 1) cout << "0";
 }
 int stringTo16(char letter)
 {
@@ -156,7 +158,7 @@ unsigned long long int* longAdd(unsigned long long int first[], unsigned long lo
 	if (coun % w1 != 0) coun = coun / w1 + 1;
 	else coun = coun / w1;
 	if (w1 != w) coun += 1;
-	start = chrono::steady_clock::now();
+	//start = chrono::steady_clock::now();
 	for (int i = 1; i < coun+2; i++)
 	{
 		temp = first[co - i] + second[co - i] + carry;
@@ -164,7 +166,7 @@ unsigned long long int* longAdd(unsigned long long int first[], unsigned long lo
 		summa[co - i] = mask(temp,4*w1);
 		carry = temp / c;
 	}
-	endtime = chrono::steady_clock::now();
+	//endtime = chrono::steady_clock::now();
 	return summa;
 }
 int LongCompare(unsigned long long int first[], unsigned long long int second[])
@@ -191,7 +193,7 @@ unsigned long long int* longDiff(unsigned long long int first[], unsigned long l
 	high(first, t, w1) > high(second, t, w1) ? k = high(first, t, w1) + 1 : k = high(second, t, w1) + 1;
 	k% w1 == 0 ? k = k / w1 : k = k / w1 + 1;
 	if (w1 != w) k = k + 1;
-	start = chrono::steady_clock::now();
+	//start = chrono::steady_clock::now();
 	for (int i = 1; i < k + 1; i++)
 	{
 		temp = first[t - i] - second[t - i] - borrow;
@@ -206,40 +208,41 @@ unsigned long long int* longDiff(unsigned long long int first[], unsigned long l
 			borrow = 1;
 		}
 	}
-	endtime = chrono::steady_clock::now();
+	//endtime = chrono::steady_clock::now();
 	return difference;
 }
-unsigned long long int* LongMulOneDigit(unsigned long long int first[], int digit, int shift,int co)
+unsigned long long int* LongMulOneDigit(unsigned long long int first[], int digit, int shift,int co,int w1=w)
 {
 	unsigned long long int* m = new unsigned long long int[co];
 	m = obnul(m,co);
 	long long int temp = 0;
 	long long int carry = 0;
-	for (int i = 1; i <= high(first,co)/w+2; i++)
+	for (int i = 1; i <= high(first,co)/w1+3; i++)
 	{
 		temp = first[co - i] * digit + carry;
-		unsigned long long int c = p(4*w);
-		m[co - i - shift] = mask(temp,4*w);
+		unsigned long long int c = p(4*w1);
+		m[co - i - shift] = mask(temp,4*w1);
 		carry = temp / c;
 	}
 	return m;
 }
-unsigned long long int* LongMul(unsigned long long int first[], unsigned long long int second[], int c)
+unsigned long long int* LongMul(unsigned long long int first[], unsigned long long int second[], int c,int w1=w)
 {
 	unsigned long long int* temp = new unsigned long long int[c];
 	unsigned long long int* mult = new unsigned long long int[c];
 	mult = obnul(mult, c);
 	temp = obnul(temp, c);
 	int cou = high(second, c) + 1;
-	if (cou % w != 0) cou = cou / w + 1;
-	else cou = cou / w;
-	start = chrono::steady_clock::now();
+	if (cou % w1 != 0) cou = cou / w1 + 1;
+	else cou = cou / w1;
+	if (w1 != w) cou += 1;
+	//start = chrono::steady_clock::now();
 	for (int i = 0; i < cou; i++)
 	{
-		temp = LongMulOneDigit(first, second[c - i - 1], i,c);
-		mult = longAdd(mult, temp, mult, c);
+		temp = LongMulOneDigit(first, second[c - i - 1], i,c,w1);
+		mult = longAdd(mult, temp, mult, c,w1);
 	}
-	endtime = chrono::steady_clock::now();
+	//endtime = chrono::steady_clock::now();
 	return mult;
 }
 unsigned long long int* LongPow(unsigned long long int first[], unsigned long long int second[])
@@ -309,6 +312,69 @@ void ShiftL(unsigned long long int s[],int n)
 	}
 	delete[] sh;
 }
+unsigned long long int* ToOne(unsigned long long int arr[])
+{
+	unsigned long long int* c = new unsigned long long int[t];
+	c = obnul(c, t);
+	int n = 1;
+	/*for (int i = 0; i < t; i++)
+	{
+		c[i] = arr[i];
+	}*/
+	c[t - 1] = arr[t - 1] % 16;
+	int k = high(arr, t) + 1;
+	for (int i = 1; i < k; i++)
+	{
+		if (i % w != 0)
+		{
+			int l = pow(16, (i % w) + 1);
+			c[t - i - 1] = arr[t - n] % l;
+			unsigned long long int cl = 0;
+			l = pow(16, (i % w));
+			cl = c[t - i - 1] % l;
+			c[t - i - 1] -= cl;
+			c[t - i - 1] /= pow(16, (i % w));
+		}
+		else
+		{
+			n++;
+			c[t - i - 1] = arr[t - n] % 16;
+		}
+	}
+	/*for (int i = 0; i < t; i++)
+	{
+		arr[i] = c[i];
+	}
+	delete[] c;*/
+	return c;
+}
+unsigned long long int* ToW(unsigned long long int arr[])
+{
+	int n = 1;
+	int h1 = high(arr, t, 1) + 1;
+	for (int i = 1; i < w; i++)
+	{
+		arr[t - 1] = arr[t - n] + arr[t - i - 1] * p(4 * i);
+		arr[t - i - 1] = 0;
+	}
+	n += 1;
+	for (int i = w; i < h1 + 2; i++)
+	{
+		for (int j = 0; j < w; j++)
+		{
+			arr[t - n] = arr[t - n] + arr[t - i - 1] * p(4 * j);
+			arr[t - i - 1] = 0;
+			i++;
+		}
+		i--;
+		n++;
+	}
+	for (int i = 0; i < t - n; i++)
+	{
+		arr[i] = 0;
+	}
+	return arr;
+}
 unsigned long long int* Division(unsigned long long int first[], unsigned long long int second[])
 {
 	unsigned long long int* div = new unsigned long long int[t];
@@ -318,63 +384,16 @@ unsigned long long int* Division(unsigned long long int first[], unsigned long l
 	s = obnul(s, t);
 	unsigned long long int* c = new unsigned long long int[t];
 	c = obnul(c, t);
+	c = ToOne(second);
 	int n = 1;
-	for (int i = 0; i < t; i++)
-	{
-		c[i] = second[i];
-	}
 	r = obnul(r, t);
-	for (int i = 0; i < t; i++)
-	{
-		r[i] = first[i];
-	}
-	r[t - 1] = first[t - 1] % 16;
-	c[t - 1] = second[t - 1] % 16;
-	int k = high(second, t)+1;
-	for (int i = 1; i < k; i++)
-	{
-		if (i%w!=0)
-		{
-			int l = pow(16, (i % w)+1);
-			c[t - i - 1] = second[t - n] % l;
-			unsigned long long int cl = 0;
-			l = pow(16, (i % w));
-			cl = c[t - i - 1] % l;
-			c[t - i - 1] -= cl;
-			c[t - i - 1] /= pow(16,(i%w));
-		}
-		else
-		{
-			n++;
-			c[t-i - 1] = second[t - n] % 16;
-		}
-	}
-	k = high(first, t) + 1;
-	n = 1;
-	for (int i = 1; i < k; i++)
-	{
-		if (i % w != 0)
-		{
-			int l = pow(16, (i % w) + 1);
-			r[t - i - 1] = first[t - n] % l;
-			unsigned long long int cl = 0;
-			l = pow(16, (i % w));
-			cl = r[t - i - 1] % l;
-			r[t - i - 1] -= cl;
-			r[t - i - 1] /= pow(16, (i % w));
-		}
-		else
-		{
-			n++;
-			r[t - i - 1] = first[t - n] % 16;
-		}
-	}
+	r = ToOne(first);
 	for (int i = 0; i < t; i++)
 	{
 		s[i] = c[i];
 	}	
 	div = obnul(div, t);
-	while (LongCompare(r, second) < 2)
+	while (LongCompare(r, s) < 2)
 	{
 		for (int i = 0; i < t; i++)
 		{
@@ -488,6 +507,8 @@ unsigned long long int* NSD(unsigned long long int first[], unsigned long long i
 	
 	delete[] f;
 	delete[] s;
+	f = nullptr;
+	s = nullptr;
 	return nsd;
 }
 unsigned long long int* NSK(unsigned long long int first[], unsigned long long int second[])
@@ -499,5 +520,87 @@ unsigned long long int* NSK(unsigned long long int first[], unsigned long long i
 	nsd = obnul(nsd, t);
 	nsd = NSD(first, second);
 	nsk = Division(nsk,nsd);
+	delete[] nsd;
+	nsd = nullptr;
+	delete nsd;
 	return nsk;
+}
+void ModAdd(unsigned long long int sum[], unsigned long long int mod[])
+{
+	start = chrono::steady_clock::now();
+	sum = Division(sum, mod);
+	endtime = chrono::steady_clock::now();
+}
+void ModMult(unsigned long long int mult[], unsigned long long int mod[])
+{
+	start = chrono::steady_clock::now();
+	mult = Division(mult, mod);
+	endtime = chrono::steady_clock::now();
+}
+void ModDiff(unsigned long long int diff[], unsigned long long int mod[])
+{
+	start = chrono::steady_clock::now();
+	diff = Division(diff, mod);
+	endtime = chrono::steady_clock::now();
+}
+unsigned long long int* Mu(unsigned long long int mod[])
+{
+	unsigned long long int* mu = new unsigned long long int[t];
+	mu = obnul(mu, t);
+	int h1 = high(mod, t) + 1;
+	h1 = h1 * 2;
+	int h = h1 % w;
+	h1 = h1 / w + 1;
+	mu[t - h1] = p(4 * h);
+	mu = Division(mu, mod);
+	cout << "mu:   ";
+	outArr(mu, t, 1);
+	cout << endl;
+	return mu;
+}
+unsigned long long int* Barrett(unsigned long long int x[], unsigned long long int mod[], unsigned long long int mu[])
+{
+	unsigned long long int* c1 = new unsigned long long int[t];
+	unsigned long long int* c2 = new unsigned long long int[t];
+	int h1 = high(mod, t) + 1;
+	h1 = h1 * 2;
+	int h = h1 % w;
+	h1 = h1 / w + 1;
+	c1 = obnul(c1, t);
+	c2 = obnul(c2, t);
+	c1 = ToOne(x);
+	for (int i = 0; i < t; i++)
+	{
+		c2[i] = c1[i];
+	}
+	start = chrono::steady_clock::now();
+	int a = (h1 - 1) * w + h;
+	a = a / 2;
+	for (int i = 0; i < t - a - 1; i++)
+	{
+		c1[t - i - 1] = c1[t - i - a];
+	}
+	c1 = ToW(c1);
+	mu = ToW(mu);
+	c1 = LongMul(c1, mu, t);
+	c1 = ToOne(c1);
+	for (int i = 0; i < t - a - 3; i++)
+	{
+		c1[t - i - 1] = c1[t - i - a - 2];
+	}
+	r = obnul(r, t);
+	c1 = ToW(c1);
+	c1 = LongMul(c1, mod, t);
+	c1 = ToOne(c1);
+	r = longDiff(c2, c1, r,1);
+	r = ToW(r);
+	while (LongCompare(r,mod)!=2)
+	{
+		r = longDiff(r,mod,r);
+	}
+	endtime = chrono::steady_clock::now();
+
+	delete[] c1;
+	delete[] c2;
+	return r;
 }

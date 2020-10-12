@@ -36,12 +36,16 @@ int main()
 	cout << "Сумма:   ";
 	outArr(summa, t);
 	cout << endl;
+	cout << dec << "Время работы суммы в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl << endl;
 	if(LongCompare(first, second)==0)
 		cout << "Значения одинаковы" << endl;
 	if (LongCompare(first, second) == 1)
 		cout << "Первое число больше второго" << endl;
 	if (LongCompare(first, second) == 2)
 		cout << "Второе число больше первого" << endl;
+	cout << endl;
 	if (LongCompare(first, second) <= 1)
 	{
 		cout << "Разность 2-х чисел:  ";
@@ -56,10 +60,16 @@ int main()
 		outArr(difference, t);
 		cout << endl;
 	}
+	cout << dec << "Время работы разности в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl << endl;
 	mult = LongMul(first, second, t);
 	cout << "Произведение:   ";
 	outArr(mult, t);
 	cout << endl;
+	cout << dec << "Время работы произведения в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl << endl;
 	if (high(first, t) >= 0) cout << "Степень страшего розряда 1-ого числа: " << dec << high(first, t) << endl;
 	else cout << "Я не знаю какой номер старшего НЕНУЛЕВОГО розряда у НУЛЯ" << endl;
 	if (high(second, t) >= 0) cout << "Степень страшего розряда второго числа: " << dec << high(second, t) << endl;
@@ -70,17 +80,24 @@ int main()
 	else cout << "Я не знаю какой номер старшего НЕНУЛЕВОГО розряда у НУЛЯ" << endl;
 	if (high(mult, t) >= 0) cout << "Степень страшего розряда произведения: " << dec << high(mult, t) << endl;
 	else cout << "Я не знаю какой номер старшего НЕНУЛЕВОГО розряда у НУЛЯ" << endl;
-	power = LongPow(first,second);
-	cout << "Степень:   ";
-	outArr(power, t);
 	cout << endl;
 	div = Division(first, second);
 	cout << "Целая часть от деления:   ";
-	outArr(div, t, 1);
+	outArr(div,t,1);
 	cout << endl;
 	cout << "Остаток от деления:   ";
-	outArr(r, t, 1);
+	outArr(r, t,1);
 	cout << endl;
+	cout << dec << "Время работы деления в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl << endl;
+	power = LongPow(first, second);
+	cout << "Степень:   ";
+	outArr(power, t);
+	cout << endl;
+	cout << dec << "Время работы степени в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl << endl;
 	nsd = NSD(first, second);
 	cout << "НОД 2-х чисел :    ";
 	outArr(nsd,t);
@@ -88,8 +105,74 @@ int main()
 	nsk = NSK(first, second);
 	cout << "НОК 2-х чисел :    ";
 	outArr(nsk, t, 1);
+	cout << endl << endl;;
+	r = obnul(r, t);
+	unsigned long long int* mod = new unsigned long long int[t];
+	mod = obnul(mod,t);
+	string N;
+	cout << "Введите модуль:   ";
+	cin >> N;
+	mod = strToArr(N);
+	unsigned long long int* mu = new unsigned long long int[t];
+	mu = obnul(mu, t);
+	mu = Mu(mod);
+	cout << "Сумма по модулю:    ";
+	ModAdd(summa,mod);
+	outArr(r, t, 1);
 	cout << endl;
+	cout << dec << "Время работы cуммы по модулю в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl;
+	Sleep(1000);
+	Barrett(summa, mod, mu);
+	cout << "Сумма с помощью Барретта:    ";
+	outArr(r,t);
+	cout << endl;
+	cout << dec << "Время работы cуммы по Барретту в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl << endl;
 	
+	cout << "Разность по модулю:    ";
+	ModDiff(difference, mod);
+	outArr(r, t, 1);
+	cout << endl;
+	cout << dec << "Время работы разности по модулю в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl;
+	Sleep(1000);
+	Barrett(difference, mod, mu);
+	cout << "Разности с помощью Барретта:    ";
+	outArr(r, t);
+	cout << endl;
+	cout << dec << "Время работы разности по Барретту в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl << endl;
+
+	mod = obnul(mod,t);
+	cout << "Введите модуль:   ";
+	cin >> N;
+	mod = strToArr(N);
+	mu = Mu(mod);
+	cout << "Произведение по модулю:    ";
+	ModMult(mult, mod);
+	outArr(r, t, 1);
+	cout << endl;
+	//outArr(mult, t);
+	//cout << endl;
+	cout << dec << "Время работы произведения по модулю в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl;
+	Sleep(1000);
+	Barrett(mult, mod, mu);
+	cout << "Произведение c помощью Барретта:    ";
+	outArr(r, t);
+	cout << endl;
+	cout << dec << "Время работы произведения по Барретту в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl;
+
+	delete[] mod;
+	delete[] mu;
 	delete[] nsk;
 	delete[] nsd;
 	delete[] div;

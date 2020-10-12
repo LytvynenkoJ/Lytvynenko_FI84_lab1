@@ -8,6 +8,7 @@ int main()
 	
 	cout << "Введите 1-е число:   ";
 	cin >> fN;
+	string N;
 	unsigned long long int* summa = new unsigned long long int[t];
 	unsigned long long int* difference = new unsigned long long int[t];
 	unsigned long long int* mult = new unsigned long long int[t];
@@ -16,6 +17,8 @@ int main()
 	unsigned long long int* div = new unsigned long long int[t];
 	unsigned long long int* nsd = new unsigned long long int[t];
 	unsigned long long int* nsk = new unsigned long long int[t];
+	unsigned long long int* mu = new unsigned long long int[t];
+	unsigned long long int* mod = new unsigned long long int[t];
 	nsk = obnul(nsk, t);
 	nsd = obnul(nsd, t);
 	div = obnul(div, t);
@@ -91,13 +94,6 @@ int main()
 	cout << dec << "Время работы деления в наносекундах : "
 		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
 		<< " ns" << endl << endl;
-	power = LongPow(first, second);
-	cout << "Степень:   ";
-	outArr(power, t);
-	cout << endl;
-	cout << dec << "Время работы степени в наносекундах : "
-		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
-		<< " ns" << endl << endl;
 	nsd = NSD(first, second);
 	cout << "НОД 2-х чисел :    ";
 	outArr(nsd,t);
@@ -107,13 +103,10 @@ int main()
 	outArr(nsk, t, 1);
 	cout << endl << endl;;
 	r = obnul(r, t);
-	unsigned long long int* mod = new unsigned long long int[t];
 	mod = obnul(mod,t);
-	string N;
 	cout << "Введите модуль:   ";
 	cin >> N;
 	mod = strToArr(N);
-	unsigned long long int* mu = new unsigned long long int[t];
 	mu = obnul(mu, t);
 	mu = Mu(mod);
 	cout << "Сумма по модулю:    ";
@@ -168,6 +161,39 @@ int main()
 	outArr(r, t);
 	cout << endl;
 	cout << dec << "Время работы произведения по Барретту в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl << endl;
+
+	
+	cout << "Степень по схеме Горнера:   ";
+	power = LongPowHorner(first,second);
+	outArr(power,t);
+	cout << endl;
+	cout << dec << "Время работы степени по схеме Горнера в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl << endl;
+	cout << "Степень оконным методом:    ";
+	power = obnul(power,t);
+	power = LongPow(first, second);
+	outArr(power, t);
+	cout << endl;
+	cout << dec << "Время работы степени оконным методом в наносекундах : "
+		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
+		<< " ns" << endl << endl;
+	
+	N.clear();
+	mod = obnul(mod,t);
+	cout << "Введите модуль:   ";
+	cin >> N;
+	mod = strToArr(N);
+	mu = obnul(mu, t);
+	mu = Mu(mod);
+	power = obnul(power, t);
+	power = ModPow(first, second, mod, mu);
+	cout << "Степень по модулю:   ";
+	outArr(power, t);
+	cout << endl;
+	cout << dec << "Время работы степени по модулю в наносекундах : "
 		<< chrono::duration_cast<chrono::nanoseconds>(endtime - start).count()
 		<< " ns" << endl;
 

@@ -732,3 +732,22 @@ unsigned long long int* ModPow(unsigned long long int first[], unsigned long lon
 	endtime = chrono::steady_clock::now();
 	return power;
 }
+void Chek(unsigned long long int A[], unsigned long long int B[], unsigned long long int C[])
+{
+	unsigned long long int* m1 = new unsigned long long int[t];
+	unsigned long long int* m2 = new unsigned long long int[t];
+	m1 = obnul(m1, t);
+	m2 = obnul(m2,t);
+	m1 = longAdd(A,B,m1,t);
+	m1 = LongMul(m1, C, t);
+	cout << "(A+B)*C" << endl;
+	outArr(m1,t);
+	cout << endl;
+	m1 = obnul(m1, t);
+	m1 = LongMul(A, C, t);
+	m2 = LongMul(B, C, t);
+	m1 = longAdd(m1, m2, m1, t);
+	cout << "A*C+B*C" << endl;
+	outArr(m1, t);
+	cout << endl;
+}
